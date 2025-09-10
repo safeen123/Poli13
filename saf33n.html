@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>نظام توقع القسم</title>
+  <style>
+    body { font-family: Arial, sans-serif; direction: rtl; text-align: center; background: #f4f4f4; }
+    .container { background: #fff; padding: 20px; border-radius: 15px; width: 80%; margin: auto; margin-top: 30px; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
+    input { margin: 5px; padding: 8px; width: 100px; text-align: center; }
+    button { margin-top: 10px; padding: 10px 20px; border: none; background: #007bff; color: white; border-radius: 8px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    #result { margin-top: 20px; text-align: right; }
+    .ok { color: green; }
+    .maybe { color: orange; }
+    .bad { color: red; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>أدخل درجات المواد (7 دروس)</h2>
+    <input type="number" id="math" placeholder="رياضيات">
+    <input type="number" id="physics" placeholder="فيزياء">
+    <input type="number" id="chemistry" placeholder="كيمياء">
+    <input type="number" id="arabic" placeholder="عربي">
+    <input type="number" id="english" placeholder="إنكليزي">
+    <input type="number" id="biology" placeholder="أحياء">
+    <input type="number" id="social" placeholder="اجتماعيات">
+    <br>
+    <button onclick="checkMajor()">احسب القسم المناسب</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    // بيانات الأقسام (نقدر نحط أكثر من 50 قسم بعدين)
+    const majors = [
+      { name: "فيزياء - جامعة الموصل - حكومي", minGrade: 86 },
+      { name: "كيمياء - جامعة الموصل - حكومي", minGrade: 83 },
+      { name: "رياضيات - جامعة الموصل - حكومي", minGrade: 80 },
+      { name: "طب - جامعة بغداد - حكومي", minGrade: 99 },
+      { name: "هندسة حاسوب - جامعة نينوى - حكومي", minGrade: 91 },
+      { name: "آداب عربي - جامعة الموصل - حكومي", minGrade: 70 },
+      { name: "قانون - جامعة دهوك - أهلي", minGrade: 78 }
+    ];
+
+    function checkMajor() {
+      const scores = [
+        parseFloat(document.getElementById("math").value),
+        parseFloat(document.getElementById("physics").value),
+        parseFloat(document.getElementById("chemistry").value),
+        parseFloat(document.getElementById("arabic").value),
+        parseFloat(document.getElementById("english").value),
+        parseFloat(document.getElementById("biology").value),
+        parseFloat(document.getElementById("social").value)
+      ];
+
+      // حساب المعدل
+      const validScores = scores.filter(s => !isNaN(s));
+      const avg = validScores.reduce((a,b) => a+b, 0) / validScores.length;
+
+      let result = `<h3>معدل الطالب: ${avg.toFixed(2)}</h3>`;
+
+      majors.forEach(major => {
+        const diff = avg - major.minGrade;
+
+        if (diff >= 0) {
+          result += `<p class="ok">✔ ${major.name} — مؤهل (فارق ${diff} درجات)</p>`;
+        } else if (Math.abs(diff) <= 5) {
+          result += `<p class="maybe">⚠ ${major.name} — احتمال (فرق ${diff} درجات)</p>`;
+        } else {
+          result += `<p class="bad">❌ ${major.name} — صعب (فرق ${diff} درجات)</p>`;
+        }
+      });
+
+      document.getElementById("result").innerHTML = result;
+    }
+  </script>
+</body>
+</html>
